@@ -33,6 +33,10 @@ class ServiceLocator(applicationContext: Context) {
         "logging.db"
     ).build()
 
+    // 这里我们看到loggerLocalDataSource这个实例是ServiceLocator的一个公开的属性,我们看到ServiceLocator又是由LogApplication所持有的一个属性
+    // 所以在 app 的生命周期内,其实loggerLocalDataSource始终是同一个对象
+    // 这时候我们就需要考虑在使用 hilt 时,如何限定注入的实例的作用域
+    // TODO 将实例的作用域限定为容器
     val loggerLocalDataSource = LoggerLocalDataSource(logsDatabase.logDao())
 
     fun provideDateFormatter() = DateFormatter()

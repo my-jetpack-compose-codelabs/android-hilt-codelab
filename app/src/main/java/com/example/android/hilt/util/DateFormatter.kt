@@ -19,11 +19,16 @@ package com.example.android.hilt.util
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.util.Date
+import javax.inject.Inject
 
 /**
  * String formatter for the log dates.
  */
-class DateFormatter {
+// 1. 对LogsFragment的dateFormatter属性添加了@Inject标注后,hilt 会负责提供数据的注入
+// 2. 所以也要告诉 hilt 提供如何提供数据注入,所以这里也要用@Inject标注dateFormatter的constructor()构造方法
+// 3. 这样我们就实现了注入数据,和如何构造要被注入的数据之间的绑定
+// TODO 为绑定提供实现的代码
+class DateFormatter @Inject constructor() {
 
     @SuppressLint("SimpleDateFormat")
     private val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss")

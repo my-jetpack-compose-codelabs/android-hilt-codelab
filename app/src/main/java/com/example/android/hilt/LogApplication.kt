@@ -17,7 +17,10 @@
 package com.example.android.hilt
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
+// 添加 hilt 的注解, 因为注入也是依赖于生命周期的,所以根据继承的基类,这里的注解需要是HiltAndroidApp
+@HiltAndroidApp
 class LogApplication : Application() {
 
     lateinit var serviceLocator: ServiceLocator

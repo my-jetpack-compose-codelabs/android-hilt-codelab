@@ -30,14 +30,29 @@ import com.example.android.hilt.R
 import com.example.android.hilt.data.Log
 import com.example.android.hilt.data.LoggerLocalDataSource
 import com.example.android.hilt.util.DateFormatter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Fragment that displays the database logs.
+ * Hilt 目前支持以下 Android 类型：Application（通过使用 @HiltAndroidApp）、Activity、Fragment、View、Service 和 BroadcastReceiver。
+ *
+ * Hilt 仅支持扩展 FragmentActivity（例如 AppCompatActivity）的 activity 和扩展 Jetpack 库 Fragment 的 fragment，不支持 Android 平台中的 Fragment（现已弃用）。
  */
+// 在 fragment 的时候需要是用 AndroidEntryPoint, 因为需要依附于Fragment的生命周期
+// 另外 hilt 对一些特殊的组件或者是比较久的组件不会支持
+@AndroidEntryPoint
 class LogsFragment : Fragment() {
 
-    private lateinit var logger: LoggerLocalDataSource
-    private lateinit var dateFormatter: DateFormatter
+    // 使用@Inject注解,标注此处的属性需要 hilt 的注入, 注入的属性不可以是 private,否则没办法外部注入了
+    @Inject lateinit var logger: LoggerLocalDataSource
+    @Inject lateinit var dateFormatter: DateFormatter
+    // 关于 lateinit:
+    // 1. 不使用 lateinit 的话需要提供的默认值或者在构造方法中初始化,使用后可以自己定义初始化的时机,但是一定需要自己掌握,避免出现空指针
+    // 2. 必须使用 var, 因为在后续可变
+    // 对比 by lazy
+    // 1. 初始化时机是在初次调用的时候,时机不可改
+    // 2. 初始化后不可改变,所以一定是 val
 
     private lateinit var recyclerView: RecyclerView
 
@@ -58,14 +73,11 @@ class LogsFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        populateFields(context)
+        // 这是一个初始化logger和dateFormatter属性的方法, 我们这里使hilt 注入,所以不需要我们在内部执行初始化了,这个方法可以删除了
+//        populateFields(context)
     }
 
-    private fun populateFields(context: Context) {
-        logger = (context.applicationContext as LogApplication).serviceLocator.loggerLocalDataSource
-        dateFormatter =
-            (context.applicationContext as LogApplication).serviceLocator.provideDateFormatter()
-    }
+    // 删除了初始化logger和dateFormatter的方法
 
     override fun onResume() {
         super.onResume()
