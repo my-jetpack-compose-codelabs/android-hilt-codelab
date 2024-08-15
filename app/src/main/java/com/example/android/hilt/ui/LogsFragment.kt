@@ -45,6 +45,7 @@ import javax.inject.Inject
 class LogsFragment : Fragment() {
 
     // 使用@Inject注解,标注此处的属性需要 hilt 的注入, 注入的属性不可以是 private,否则没办法外部注入了
+    // logger 是LoggerLocalDataSource实例,会使用@Inject constructor(private val logDao: LogDao)来注入,而构建LoggerLocalDataSource实例需要的数据我们在 provide 方法里面提供了
     @Inject lateinit var logger: LoggerLocalDataSource
     @Inject lateinit var dateFormatter: DateFormatter
     // 关于 lateinit:

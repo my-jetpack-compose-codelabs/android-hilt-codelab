@@ -22,12 +22,16 @@ import com.example.android.hilt.LogApplication
 import com.example.android.hilt.R
 import com.example.android.hilt.navigator.AppNavigator
 import com.example.android.hilt.navigator.Screens
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Main activity of the application.
  *
  * Container for the Buttons & Logs fragments. This activity simply tracks clicks on buttons.
  */
+// 因为挂载在mainActivity 上的LogsFragment已经实装了 hilt 的注入,所以 activity 也得提供hilt 的注入入口
+// 这时候启动程序是可以跑的,但是你会发现 ButtonsFragment 和 LogsFragment其实操作的并不是同一个数据库,但是程序是正常的,这是因为 数据库的创建时使用的参数完全一致,所以尽管ButtonsFragment的数据库实例来自applicationContext,LogsFragment的实例来自于hilt,这两个 database 的示例不是同一个实例,但是底层的数据库文件却是同一个文件,所以程序能正常的运行
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navigator: AppNavigator

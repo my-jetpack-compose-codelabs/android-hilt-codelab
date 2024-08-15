@@ -48,10 +48,12 @@ class ButtonsFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
+        // TODO 后续将不再在 fragment 内部初始化属性,和 LogsFragment 一样改为 hilt 注入
         populateFields(context)
     }
 
     private fun populateFields(context: Context) {
+        // 这里的数据库的是从LogApplication中获取到的属性,和LogsFragment中的 hilt 注入的数据库实例是不同的对象,但是指向相同的数据库文件,所以程序仍然能正常运行
         logger = (context.applicationContext as LogApplication).
             serviceLocator.loggerLocalDataSource
 

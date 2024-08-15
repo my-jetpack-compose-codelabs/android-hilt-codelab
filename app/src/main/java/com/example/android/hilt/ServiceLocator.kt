@@ -27,6 +27,7 @@ import com.example.android.hilt.util.DateFormatter
 
 class ServiceLocator(applicationContext: Context) {
 
+    // TODO 我们已经在 hilt 里面实现了对 database 的创建,但是现在还只有 logsFragment 使用了, ButtonsFragment 中还是使用的这个, 但是由于 Room 的特性, 同样配置的数据即便是不同实例,操控的数据库文件是相同的,所以 app 还能正常运行
     private val logsDatabase = Room.databaseBuilder(
         applicationContext,
         AppDatabase::class.java,
@@ -36,7 +37,6 @@ class ServiceLocator(applicationContext: Context) {
     // 这里我们看到loggerLocalDataSource这个实例是ServiceLocator的一个公开的属性,我们看到ServiceLocator又是由LogApplication所持有的一个属性
     // 所以在 app 的生命周期内,其实loggerLocalDataSource始终是同一个对象
     // 这时候我们就需要考虑在使用 hilt 时,如何限定注入的实例的作用域
-    // TODO 将实例的作用域限定为容器
     val loggerLocalDataSource = LoggerLocalDataSource(logsDatabase.logDao())
 
     fun provideDateFormatter() = DateFormatter()
