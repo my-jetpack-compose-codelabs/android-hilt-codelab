@@ -23,19 +23,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.android.hilt.LogApplication
 import com.example.android.hilt.R
 import com.example.android.hilt.data.LoggerLocalDataSource
 import com.example.android.hilt.navigator.AppNavigator
 import com.example.android.hilt.navigator.Screens
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Fragment that displays buttons whose interactions are recorded.
  */
+@AndroidEntryPoint
 class ButtonsFragment : Fragment() {
 
-    private lateinit var logger: LoggerLocalDataSource
-    private lateinit var navigator: AppNavigator
+    @Inject lateinit var logger: LoggerLocalDataSource
+    @Inject lateinit var navigator: AppNavigator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,18 +49,6 @@ class ButtonsFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
-        // TODO 后续将不再在 fragment 内部初始化属性,和 LogsFragment 一样改为 hilt 注入
-        populateFields(context)
-    }
-
-    private fun populateFields(context: Context) {
-        // 这里的数据库的是从LogApplication中获取到的属性,和LogsFragment中的 hilt 注入的数据库实例是不同的对象,但是指向相同的数据库文件,所以程序仍然能正常运行
-        logger = (context.applicationContext as LogApplication).
-            serviceLocator.loggerLocalDataSource
-
-        navigator = (context.applicationContext as LogApplication).
-            serviceLocator.provideNavigator(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

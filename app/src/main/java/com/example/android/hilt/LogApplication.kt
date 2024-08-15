@@ -21,12 +21,5 @@ import dagger.hilt.android.HiltAndroidApp
 
 // 添加 hilt 的注解, 因为注入也是依赖于生命周期的,所以根据继承的基类,这里的注解需要是HiltAndroidApp
 @HiltAndroidApp
-class LogApplication : Application() {
-
-    lateinit var serviceLocator: ServiceLocator
-
-    override fun onCreate() {
-        super.onCreate()
-        serviceLocator = ServiceLocator(applicationContext)
-    }
-}
+// 已经不需要在 app 的 onCreate 的时候初始化 serviceLocator, 因为 hilt 会负责注入
+class LogApplication : Application()

@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentActivity
 import com.example.android.hilt.R
 import com.example.android.hilt.ui.ButtonsFragment
 import com.example.android.hilt.ui.LogsFragment
+import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 /**
@@ -30,6 +31,8 @@ import javax.inject.Inject
 // 这里我们实现了需求2, 这是因为 hilt 给我提供一些预定义绑定, hilt 预定义绑定
 // 预定义1: activity, application 等 android 组件的实例,也就是被注入的 android 组件本身我们可以不用指定了,但是要注意,要考虑 hilt 组件的层级, 如果组件是SingletonComponent,那么 activity 可能还没实例化所以无法提供, 但是组件是 FragmentComponent的话,可以保证 application 和 activity 都已经实例化了所以可以实现
 // 预定义2: 可以提android 组件的上下文,如@ApplicationContext, 规则和上述一致,需要 hilt 组件够低才能提供
+// 在一个 Activity 下使用同一个 navigator 实例即可,所以这里添加上作用域指定
+@ActivityScoped
 class AppNavigatorImpl @Inject constructor(private val activity: FragmentActivity) : AppNavigator {
     override fun navigateTo(screen: Screens) {
         val fragment = when (screen) {
