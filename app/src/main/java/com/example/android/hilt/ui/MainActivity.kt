@@ -23,6 +23,7 @@ import com.example.android.hilt.R
 import com.example.android.hilt.navigator.AppNavigator
 import com.example.android.hilt.navigator.Screens
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Main activity of the application.
@@ -33,14 +34,17 @@ import dagger.hilt.android.AndroidEntryPoint
 // 这时候启动程序是可以跑的,但是你会发现 ButtonsFragment 和 LogsFragment其实操作的并不是同一个数据库,但是程序是正常的,这是因为 数据库的创建时使用的参数完全一致,所以尽管ButtonsFragment的数据库实例来自applicationContext,LogsFragment的实例来自于hilt,这两个 database 的示例不是同一个实例,但是底层的数据库文件却是同一个文件,所以程序能正常的运行
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var navigator: AppNavigator
+    // 这里我们要实现对AppNavigator实例的注入
+    // AppNavigator是一个接口无法被实例化,这里的是说navigator是一个实现了AppNavigator接口的类的实例, 在注入前提供这个实例的方法是通过serviceLocator的provideNavigator(activity: FragmentActivity): AppNavigator方法然后返回AppNavigatorImpl(activity)
+    // 这里我们就知道注入的是AppNavigatorImpl实例, 需要传入的参数是activity,也就是当前的 mainActivity
+    // 为了实现注入需要解决的问题有两个
+    // 1. 如何让 hilt 知道navigator要注入的实现了AppNavigator接口的实例是AppNavigatorImpl实例
+    // 2. 如何给 AppNavigatorImpl 的构造方法提供 activity 参数
+    @Inject lateinit var navigator: AppNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        navigator = (applicationContext as LogApplication).serviceLocator.provideNavigator(this)
 
         if (savedInstanceState == null) {
             navigator.navigateTo(Screens.BUTTONS)
