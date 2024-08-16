@@ -27,7 +27,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.hilt.R
 import com.example.android.hilt.data.Log
-import com.example.android.hilt.data.LoggerLocalDataSource
+import com.example.android.hilt.data.LoggerDataSource
+import com.example.android.hilt.di.InMemoryLogger
 import com.example.android.hilt.util.DateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -45,7 +46,9 @@ class LogsFragment : Fragment() {
 
     // 使用@Inject注解,标注此处的属性需要 hilt 的注入, 注入的属性不可以是 private,否则没办法外部注入了
     // logger 是LoggerLocalDataSource实例,会使用@Inject constructor(private val logDao: LogDao)来注入,而构建LoggerLocalDataSource实例需要的数据我们在 provide 方法里面提供了
-    @Inject lateinit var logger: LoggerLocalDataSource
+    // 我们只需要改变限定符,就可以实现更改LoggerDataSource了
+    @InMemoryLogger
+    @Inject lateinit var logger: LoggerDataSource
     @Inject lateinit var dateFormatter: DateFormatter
     // 关于 lateinit:
     // 1. 不使用 lateinit 的话需要提供的默认值或者在构造方法中初始化,使用后可以自己定义初始化的时机,但是一定需要自己掌握,避免出现空指针

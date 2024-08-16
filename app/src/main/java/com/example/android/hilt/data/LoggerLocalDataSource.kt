@@ -31,14 +31,15 @@ import javax.inject.Singleton
 @Singleton
 // 如果我们想提供LoggerLocalDataSource实例,我们有两个方法,一个是实现 provide 方法直接注入LoggerLocalDataSource实例, 一个使用@Inject constructor,然后在 provide 方法中提供参数的方式来实现注入
 // 这里我们是通过@Inject constructor来实现注入,实现这个注入的hilt 组件会根据使用状况去指定,比如需要LoggerLocalDataSource实例注入的 app 层级的话,那 hilt 组件就是SingletonComponent, 如果是 activity 需要注入那么就是ActivityComponent
-class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao) {
+class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao): LoggerDataSource {
 
     private val executorService: ExecutorService = Executors.newFixedThreadPool(4)
     private val mainThreadHandler by lazy {
         Handler(Looper.getMainLooper())
     }
 
-    fun addLog(msg: String) {
+    // 因为我们新增了一个LoggerDataSource接口, 所以这里的方法都添加了 override
+    override fun addLog(msg: String) {
         executorService.execute {
             logDao.insertAll(
                 Log(
@@ -49,14 +50,14 @@ class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao) {
         }
     }
 
-    fun getAllLogs(callback: (List<Log>) -> Unit) {
+    override fun getAllLogs(callback: (List<Log>) -> Unit) {
         executorService.execute {
             val logs = logDao.getAll()
             mainThreadHandler.post { callback(logs) }
         }
     }
 
-    fun removeLogs() {
+    override fun removeLogs() {
         executorService.execute {
             logDao.nukeTable()
         }
